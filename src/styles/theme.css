@@ -1,0 +1,42 @@
+/**
+ * 主题色覆盖 —— Arco 主品牌色调整为紫色 #722ED1
+ *
+ * 工作原理:
+ *   Arco 把主色 RGB 三元组放在 CSS 变量里(空格分隔,内部用 rgb(var(--primary-6)))。
+ *   只要在 body 选择器上重新声明 --primary-N(N: 1-10),全套主题就跟着切。
+ *
+ * 关于优先级:
+ *   组件按需加载时,组件自带的 Arco CSS 会比这里晚 import,
+ *   所以用 `html body` (特异性 0,0,2) 战胜 Arco 自带的 `body` (0,0,1)。
+ *
+ * 要换其他品牌色:打开 https://arco.design/themes/palette
+ *   输入你的主色 hex → 拷贝生成的 10 阶 → 把下面 hex 改了即可。
+ */
+
+/* ===== 浅色主题:#722ED1 紫色 ===== */
+html body {
+  --primary-1: 245 235 255; /* #F5EBFF */
+  --primary-2: 225 205 250; /* #E1CDFA */
+  --primary-3: 198 169 244; /* #C6A9F4 */
+  --primary-4: 169 130 233; /* #A982E9 */
+  --primary-5: 141 88 222;  /* #8D58DE */
+  --primary-6: 114 46 209;  /* #722ED1 ← 主色 */
+  --primary-7: 90 31 181;   /* #5A1FB5 */
+  --primary-8: 69 20 153;   /* #451499 */
+  --primary-9: 50 11 125;   /* #320B7D */
+  --primary-10: 34 5 97;    /* #220561 */
+}
+
+/* ===== 深色主题:Arco 约定下主色色阶反向 ===== */
+html body[arco-theme='dark'] {
+  --primary-1: 34 5 97;
+  --primary-2: 50 11 125;
+  --primary-3: 69 20 153;
+  --primary-4: 90 31 181;
+  --primary-5: 114 46 209;
+  --primary-6: 141 88 222; /* dark 下主色稍亮,夜里更易辨识 */
+  --primary-7: 169 130 233;
+  --primary-8: 198 169 244;
+  --primary-9: 225 205 250;
+  --primary-10: 245 235 255;
+}
