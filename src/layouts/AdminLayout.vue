@@ -55,6 +55,10 @@ const collapsed = computed(() => sidebarStore.collapsed)
   background: var(--color-bg-2);
   border-right: 1px solid var(--color-border);
   transition: width 0.2s;
+  /* 让 logo 占固定高度、菜单占剩余空间,避免菜单 100% 高溢出触发滚动条 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .logo {

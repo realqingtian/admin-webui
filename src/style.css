@@ -44,3 +44,69 @@ body {
 #app {
   background-color: var(--color-fill-2);
 }
+
+/*
+ * 跨平台滚动条统一处理:
+ *   Windows Chrome 默认 auto(占位 ~17px),Mac Chrome 默认 overlay(不占位),
+ *   同一份布局在两边表现不一致 —— 这里:
+ *     1. scrollbar-gutter: stable 始终为滚动条预留 6px 槽位,避免内容宽度抖动
+ *     2. ::-webkit-scrollbar 把滑块做细,让两平台视觉一致
+ *     3. 滑块未操作时半透明,鼠标 hover 时加深,贴近原生观感
+ */
+.arco-menu,
+.arco-dropdown-popup,
+.arco-select-view,
+.arco-list,
+.arco-table-content {
+  scrollbar-gutter: stable;
+}
+
+/* Firefox */
+.arco-menu,
+.arco-dropdown-popup,
+.arco-select-view,
+.arco-list,
+.arco-table-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* WebKit / Blink(Windows Chrome + Mac Chrome) */
+.arco-menu::-webkit-scrollbar,
+.arco-dropdown-popup::-webkit-scrollbar,
+.arco-select-view::-webkit-scrollbar,
+.arco-list::-webkit-scrollbar,
+.arco-table-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.arco-menu::-webkit-scrollbar-track,
+.arco-dropdown-popup::-webkit-scrollbar-track,
+.arco-select-view::-webkit-scrollbar-track,
+.arco-list::-webkit-scrollbar-track,
+.arco-table-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.arco-menu::-webkit-scrollbar-thumb,
+.arco-dropdown-popup::-webkit-scrollbar-thumb,
+.arco-select-view::-webkit-scrollbar-thumb,
+.arco-list::-webkit-scrollbar-thumb,
+.arco-table-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  background-clip: padding-box;
+}
+.arco-menu::-webkit-scrollbar-thumb:hover,
+.arco-dropdown-popup::-webkit-scrollbar-thumb:hover,
+.arco-select-view::-webkit-scrollbar-thumb:hover,
+.arco-list::-webkit-scrollbar-thumb:hover,
+.arco-table-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+.arco-menu::-webkit-scrollbar-corner,
+.arco-dropdown-popup::-webkit-scrollbar-corner,
+.arco-select-view::-webkit-scrollbar-corner,
+.arco-list::-webkit-scrollbar-corner,
+.arco-table-content::-webkit-scrollbar-corner {
+  background: transparent;
+}
