@@ -28,6 +28,7 @@ export default {
   menu: {
     dashboard: '控制台',
     example: '示例页面',
+    image: '图片示例',
   },
 
   layout: {
@@ -236,6 +237,27 @@ export default {
       title: '删除确认',
       content: '确定要删除「{name}」吗?',
       success: '已删除',
+    },
+  },
+
+  image: {
+    sections: {
+      basic: '基础用法',
+      fit: '填充模式',
+      caption: '标题与描述',
+      group: '多图预览',
+      states: '加载与错误状态',
+    },
+    caption: {
+      title: '图片标题',
+      inner: '描述文字在内部',
+      outer: '描述文字在外部',
+    },
+    states: {
+      loading: '加载效果',
+      error: '加载失败',
+      errorText: '图片加载失败',
+      noPreview: '不可预览',
     },
   },
 }

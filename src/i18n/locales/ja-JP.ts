@@ -28,6 +28,7 @@ export default {
   menu: {
     dashboard: 'ダッシュボード',
     example: 'サンプルページ',
+    image: '画像デモ',
   },
 
   layout: {
@@ -236,6 +237,27 @@ export default {
       title: '削除の確認',
       content: '「{name}」を削除してもよろしいですか？',
       success: '削除しました',
+    },
+  },
+
+  image: {
+    sections: {
+      basic: '基本的な使い方',
+      fit: 'フィットモード',
+      caption: 'キャプション',
+      group: '画像プレビューグループ',
+      states: '読み込みとエラー状態',
+    },
+    caption: {
+      title: '画像タイトル',
+      inner: '内側の説明',
+      outer: '外側の説明',
+    },
+    states: {
+      loading: '読み込み効果',
+      error: '読み込みエラー',
+      errorText: '画像の読み込みに失敗しました',
+      noPreview: 'プレビューなし',
     },
   },
 }

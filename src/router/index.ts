@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/example/ExampleView.vue'),
         meta: { title: 'menu.example', requiresAuth: true },
       },
+      {
+        path: 'image',
+        name: 'image',
+        component: () => import('@/views/image/ImageView.vue'),
+        meta: { title: 'menu.image', requiresAuth: true },
+      },
     ],
   },
   {

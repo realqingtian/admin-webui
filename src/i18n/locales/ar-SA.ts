@@ -28,6 +28,7 @@ export default {
   menu: {
     dashboard: 'لوحة التحكم',
     example: 'صفحة مثال',
+    image: 'عرض الصور',
   },
 
   layout: {
@@ -236,6 +237,27 @@ export default {
       title: 'تأكيد الحذف',
       content: 'هل أنت متأكد من أنك تريد حذف "{name}"؟',
       success: 'تم الحذف',
+    },
+  },
+
+  image: {
+    sections: {
+      basic: 'الاستخدام الأساسي',
+      fit: 'وضع التعبئة',
+      caption: 'العنوان والوصف',
+      group: 'معاينة مجموعة الصور',
+      states: 'حالات التحميل والخطأ',
+    },
+    caption: {
+      title: 'عنوان الصورة',
+      inner: 'الوصف بالداخل',
+      outer: 'الوصف بالخارج',
+    },
+    states: {
+      loading: 'تأثير التحميل',
+      error: 'خطأ في التحميل',
+      errorText: 'فشل تحميل الصورة',
+      noPreview: 'بدون معاينة',
     },
   },
 }

@@ -28,6 +28,7 @@ export default {
   menu: {
     dashboard: 'Dashboard',
     example: 'Example',
+    image: 'Image Demo',
   },
 
   layout: {
@@ -236,6 +237,27 @@ export default {
       title: 'Confirm Delete',
       content: 'Are you sure you want to delete "{name}"?',
       success: 'Deleted',
+    },
+  },
+
+  image: {
+    sections: {
+      basic: 'Basic Usage',
+      fit: 'Fit Mode',
+      caption: 'Caption',
+      group: 'Image Preview Group',
+      states: 'Loading & Error States',
+    },
+    caption: {
+      title: 'Image Title',
+      inner: 'Description inside',
+      outer: 'Description outside',
+    },
+    states: {
+      loading: 'Loading Effect',
+      error: 'Load Error',
+      errorText: 'Failed to load image',
+      noPreview: 'No Preview',
     },
   },
 }
