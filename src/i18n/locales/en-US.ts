@@ -40,6 +40,8 @@ export default {
       tooltip: 'Switch language',
       zhCN: '简体中文',
       enUS: 'English',
+      arSA: 'العربية',
+      jaJP: '日本語',
     },
     user: {
       defaultName: 'Administrator',
