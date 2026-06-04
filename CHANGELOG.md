@@ -16,11 +16,29 @@
 - 项目文档:完整 `README.md` 与开发规范 `docs/DEVELOPMENT.md`
 - 新增 `.editorconfig` 保证跨编辑器一致
 - 新增 `CHANGELOG.md`
+- **图片组件示例页** [`src/views/image/ImageView.vue`](src/views/image/ImageView.vue):演示 `a-image` 的基础用法、填充模式(fit)、标题与描述、多图预览(`a-image-preview-group`)、加载与错误状态
+- **上传组件示例页** [`src/views/upload/UploadView.vue`](src/views/upload/UploadView.vue):演示 `a-upload` 的基础 / 拖拽 / 照片墙 / 限制条件 / 手动上传
+- **新增阿拉伯语(ar-SA)与日语(ja-JP)语言包** [`src/i18n/locales/ar-SA.ts`](src/i18n/locales/ar-SA.ts) / [`src/i18n/locales/ja-JP.ts`](src/i18n/locales/ja-JP.ts):Header 语言下拉四语切换;阿拉伯语自动 RTL 翻转由 Arco `ConfigProvider` 处理
+- **二级菜单示例** [`src/views/menu-demo/`](src/views/menu-demo/):
+  - 一级菜单 `菜单示例` 下挂 3 个子项 `菜单 1/2/3`
+  - `Menu1View.vue` 计数器 + 特性清单
+  - `Menu2View.vue` Tabs + 描述列表 + Collapse
+  - `Menu3View.vue` 可增删 / 勾选 / 表单校验的迷你记事本
+  - `MenuDemoNav.vue` 页面切换演示条(顶部三色按钮 + 当前页高亮,直观看到页面切换)
+  - `MenuDemoView.vue` 父级占位(默认 `redirect` 到 menu1)
+- **多级侧栏**:`src/config/menu.ts` 新增 `SubMenuItem` 类型,`MenuItem.children` 自动用 `<a-sub-menu>` 渲染;`AppSidebar` 选中态 / 展开态完整支持一级 + 二级
+- 开发规范 [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) 增补「Arco 菜单组件(踩坑必读)」「二级菜单配置」「国际化约定」「Arco 组件 demo 页规范」章节
 
 ### Changed
 - 移除 `main.ts` 里的 `app.use(ArcoVue)` / `app.use(ArcoVueIcon)` 全量引入
 - 命令式 API(Message / Notification)样式改为按需 import 单文件
 - NotFoundView 改用 Arco 内置 404 插画并放大到 280px
+- `src/config/menu.ts` 改用 `MenuItem + SubMenuItem` 结构描述侧栏菜单(支持二级)
+- `src/layouts/AppSidebar.vue` 重写为 `v-model:open-keys` 双向绑定(arco v2.58 的正确用法)
+
+### Fixed
+- 修复 `<a-menu>` 单向 `:open-keys` + 不存在的 `sub-menu-toggle` 事件导致的二级菜单点击不展开 / 点击无反应
+- 修复 `handleMenuClick` 不识别二级菜单 key(`menu1/menu2/menu3`)的 bug,导致子项点击后不跳转
 
 ### Performance
 - Build 体积:JS 总量 ~636 KB / CSS 总量 ~268 KB(全量约 ~2.1 MB),首屏(/login)gzip ~35 KB

@@ -76,10 +76,18 @@ src/
 ├── assets/        # 走 Vite 处理的资源(图片、字体)
 ├── components/    # 跨页面可复用的业务组件
 ├── config/        # 静态配置:菜单、常量、枚举
+│   └── menu.ts    # 侧栏菜单(支持一级 + 二级)
+├── i18n/          # vue-i18n 多语言
+│   ├── index.ts
+│   └── locales/   # 每种语言一个文件:zh-CN / en-US / ar-SA / ja-JP
 ├── layouts/       # 整体布局组件
+│   ├── AdminLayout.vue
+│   ├── AppSidebar.vue  # 支持一级 + 二级菜单渲染
+│   └── AppHeader.vue
 ├── lib/           # 与业务无关的工具函数
 ├── router/        # 路由表 + 守卫
 ├── stores/        # Pinia stores
+├── styles/        # 全局样式 / 主题色覆盖
 ├── types/         # 全局类型(API 返回、领域模型)
 └── views/         # 页面级组件,按业务模块分子目录
     └── <模块>/
@@ -94,6 +102,7 @@ src/
 - `views/<模块>/components/` 放**仅本模块内复用**的小组件,不要为了「好看」过早抽象
 - `lib/` 不依赖 Vue,纯函数;依赖 Vue 的 composable 放到 `composables/`(目前未建,需要再建)
 - 一个文件超过 **300 行** 就考虑拆分
+- 二级菜单的页面建议命名 `<模块><子项>View.vue`,如 `Menu1View.vue` / `Menu2View.vue`,而不是 `Menu/Sub1View.vue`(避免与子目录名混淆)
 
 ---
 
@@ -221,6 +230,24 @@ function reload() { /* ... */ }
 - 表单校验规则**写在 setup 内常量**,不要内联模板
 - `v-model:visible` 必须搭配 `unmount-on-close`(对话框),避免内部状态污染
 
+### Arco 菜单组件(踩坑必读)
+
+`@arco-design/web-vue` v2.58 的 `<a-menu>` 受控用法有特定要求:
+
+| ✅ 正确 | ❌ 错误 |
+| --- | --- |
+| `v-model:open-keys="openKeys"`(双向) | `:open-keys="openKeys"`(单向) |
+| `@menu-item-click="..."` | `@sub-menu-toggle="..."`(v2.58 **没有**该事件) |
+| `@sub-menu-click="..."`(子菜单标题点击) | 自己监听 click DOM 事件 |
+
+- **必须用 `v-model:open-keys`**:arCO 内部 toggle 子菜单展开态时会 emit `update:openKeys`,单向绑定会导致外层 ref 永远不更新、UI 也不响应。
+- **没有 `sub-menu-toggle` 事件**:V2.58 的 emit 只有 `collapse` / `update:collapsed` / `update:selectedKeys` / `update:openKeys` / `menu-item-click` / `sub-menu-click`。不要照搬 1.x / 其他版本示例。
+- **二级菜单项的 key**:在 `menu-item-click` 回调里拿到的 key 是子项的 `key`(如 `'menu1'`),**不是**父项的。需要去 `menu.ts` 的 `children` 里查找再 push 路由。
+- **侧栏折叠态**:折叠时子菜单会变成 popup 浮层,这种情况下 arco 自管;但为了避免折叠前残留的 openKeys 干扰,推荐在 `watch(collapsed, v => v && (openKeys.value = []))` 主动清空。
+- **手动控制(可选)**:若需"同时只展开一个一级菜单组"(手风琴行为),`v-model:open-keys` 接 `ref<string[]>([])`,在路由变化 / 用户点击时把它写成一个长度为 1 的数组即可。
+
+参考实现:[`src/layouts/AppSidebar.vue`](../src/layouts/AppSidebar.vue)。
+
 ---
 
 ## Pinia Store 规范
@@ -259,6 +286,78 @@ function reload() { /* ... */ }
 - 受保护路由必须 `meta.requiresAuth: true`,否则守卫不会拦
 - 菜单项一律加进 `src/config/menu.ts`;若是详情页不要进菜单(可在路由 meta 加 `hideInMenu: true` 表达意图,虽然当前菜单只读 menu.ts)
 - 面包屑由 Header 从 `route.matched[*].meta.title` 自动拼,所以**所有有页面的路由都要写 title**
+
+### 二级菜单(子菜单)
+
+`src/config/menu.ts` 中给 `MenuItem` 加可选 `children` 字段,自动用 `<a-sub-menu>` 渲染。
+
+```ts
+// src/config/menu.ts
+import type { Component } from 'vue'
+import { IconMenu } from '@arco-design/web-vue/es/icon'
+
+export interface SubMenuItem {
+  key: string
+  /** i18n key,如 'menu.menu1' */
+  title: string
+  path: string
+}
+
+export interface MenuItem {
+  key: string
+  title: string         // i18n key
+  icon: Component
+  path: string          // 有 children 时,作为父级默认路径(用于 redirect / 前缀匹配)
+  children?: SubMenuItem[]
+}
+```
+
+**示例 —— 完整的一级 + 二级菜单配置**:
+
+```ts
+{
+  key: 'menu-demo',
+  title: 'menu.menuDemo',
+  icon: IconMenu,
+  path: '/menu-demo',
+  children: [
+    { key: 'menu1', title: 'menu.menu1', path: '/menu-demo/menu1' },
+    { key: 'menu2', title: 'menu.menu2', path: '/menu-demo/menu2' },
+    { key: 'menu3', title: 'menu.menu3', path: '/menu-demo/menu3' },
+  ],
+}
+```
+
+**配套路由** —— 用嵌套路由 + 父级 `redirect`:
+
+```ts
+// src/router/index.ts
+{
+  path: 'menu-demo',
+  name: 'menu-demo',
+  redirect: '/menu-demo/menu1',                       // 父级直接落子项
+  component: () => import('@/views/menu-demo/MenuDemoView.vue'),
+  meta: { title: 'menu.menuDemo', requiresAuth: true },
+  children: [
+    {
+      path: 'menu1',
+      name: 'menu1',
+      component: () => import('@/views/menu-demo/Menu1View.vue'),
+      meta: { title: 'menu.menu1', requiresAuth: true },
+    },
+    // menu2 / menu3 同上
+  ],
+}
+```
+
+**侧栏 AppSidebar 的处理**([`src/layouts/AppSidebar.vue`](../src/layouts/AppSidebar.vue)):
+
+- 渲染:遍历 `menuItems`,有 `children` 用 `<a-sub-menu>`,无 `children` 用 `<a-menu-item>`
+- 选中态:二级路径命中 → 用子项 key 选中;否则按父项 path 前缀兜底
+- 展开态:`v-model:open-keys` 与 arco 双向绑定,路由变化时主动同步一次,侧栏折叠时清空
+- 路由切换:点击子项触发 `menu-item-click`,key 是**子项的 key**(不是父项的),要去 `children` 里查 path 再 `router.push`
+
+**多语言**:`src/i18n/locales/*.ts` 的 `menu` 段同时加父 + 子的 key,子页面的文案放在 `menuDemo.menu1` / `menuDemo.menu2` 等命名空间下。
 
 ---
 
@@ -318,6 +417,40 @@ export const userApi = {
 - 401 / 403 在拦截器统一处理(清 token + 跳 `/login`)
 - 不要把后端字段名直接透传给 UI —— 在 API 层做一次映射(字段重命名、枚举翻译)
 - 文件上传用 `FormData`,不要把 `Content-Type` 写死
+
+---
+
+## 国际化(i18n)约定
+
+- 词条文件位置:`src/i18n/locales/{zh-CN,en-US,ar-SA,ja-JP}.ts`,**每加一个 key 四个文件都要补**
+- **键名分层**:`menu.xxx` / `example.xxx` / `image.xxx` / `menuDemo.menu1.xxx` —— 按页面 / 模块命名空间分层
+- **路由 `meta.title` 与菜单 `title` 必须用 i18n key**(如 `menu.dashboard`),模板 / 面包屑里再 `t()` 解析,切语言时自动同步
+- **避免硬编码**:模板里写死的英文字符串是 bug 隐患,新人 PR 评审会被拦
+- **复数 / 占位符**:
+  ```ts
+  // 定义
+  time: { minutesAgo: '{n} 分钟前' }
+  // 使用
+  t('time.minutesAgo', { n: 5 })  // → "5 分钟前"
+  ```
+- **RTL 语言**(如阿拉伯语):Arco 的 `ConfigProvider` 会自动给 `<html dir="rtl">`,组件 layout 会跟着翻;**不要**自己在样式里加 `direction: rtl`
+- **新增语言的步骤**:
+  1. 拷贝 `en-US.ts` → `xx-XX.ts`,翻译所有 `value`
+  2. `src/i18n/index.ts` 注册新 locale(导入 + 加到 messages)
+  3. `src/i18n/index.ts` 的语言识别规则里加 `xx*` 匹配
+  4. `src/i18n/index.ts` 给 `ConfigProvider` 加 `locale: arcoLocale['xx-XX']`(若 arco 没提供就回退英文)
+  5. `src/components/LanguageSwitch.vue` 的下拉里加一项
+
+---
+
+## Arco 组件 demo 页规范
+
+项目内 `/image` `/upload` `/menu-demo/*` 是组件 / 菜单用法示例,**不是业务页**。新增示例页时请遵守:
+
+- 一个示例页对应**一个组件 / 一个特性**,不要把多个不相关的组件堆一页
+- 用 `a-card` 切分多个 section,每个 card 顶部用 `t('<demo>.sections.<name>')` 标题
+- 简短说明放在 `a-alert` 里,让用户一眼明白这段代码演示什么
+- 文案统一用 i18n,不要硬编码中英文
 
 ---
 
@@ -423,4 +556,4 @@ PR 要点:
 
 ---
 
-最后更新:2026-06-02
+最后更新:2026-06-05
