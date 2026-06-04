@@ -2,15 +2,16 @@
 
 > 基于 Vue 3 + Vite + Arco Design Vue 的中后台管理系统模板。
 
-包含登录、路由守卫、可折叠侧栏布局、面包屑、主题切换(浅色 / 深色)、状态持久化,以及一个典型 CRUD 示例页(增删改查 + 表单校验)。所有数据均为本地 mock,接 API 时替换 `views/*` 中的数据来源即可。
+包含登录、路由守卫、可折叠侧栏布局(支持**二级菜单**)、面包屑、主题切换(浅色 / 深色)、状态持久化,以及 CRUD 示例、Image / Upload 组件示例、二级菜单示例。所有数据均为本地 mock,接 API 时替换 `views/*` 中的数据来源即可。
 
 ## ✨ 特性
 
 - ⚡ **Vite 8** + **Vue 3.5** + **TypeScript 6** —— 现代化构建链路
 - 🎨 **Arco Design Vue 2.58** —— 字节跳动出品的中后台组件库
 - 🧭 **Vue Router 4** + **Pinia 2** —— 路由守卫 + 模块化状态
+- 🧩 **多级侧栏** —— 支持一级菜单 + 二级子菜单的展开 / 收起 / 切换,折叠态下二级以浮层显示
 - 🛡️ **登录流程** —— `localStorage` 持久化 token,未登录自动重定向
-- 🌍 **国际化** —— 中文 / 英文双语,首次启动按浏览器语言识别,fallback 中文
+- 🌍 **国际化** —— 简体中文 / English / العربية / 日本語 四语,首次启动按浏览器语言识别,fallback 中文
 - 🌗 **深色模式** —— 切换 `body[arco-theme=dark]` 属性,跟随系统偏好
 - 📦 **按需加载 + 主题定制** —— `unplugin-vue-components` + `ArcoResolver`,只打包用到的 Arco 组件,主色调可通过 CSS 变量一键覆盖
 - 📐 **Arco Pro 风格布局** —— 可折叠 Sider + Header 面包屑 + Content
@@ -78,13 +79,16 @@ admin-webui/
 │   ├── App.vue             # 根组件,只渲染 <RouterView/>
 │   ├── main.ts             # 入口:Pinia + Router + ArcoVue
 │   ├── style.css           # 全局极简重置
+│   ├── components.d.ts     # 自动生成的组件类型(勿手改)
 │   ├── config/
-│   │   └── menu.ts         # 侧栏菜单数据(集中维护)
+│   │   └── menu.ts         # 侧栏菜单数据(支持二级子菜单)
 │   ├── i18n/
 │   │   ├── index.ts        # i18n 入口 + 浏览器语言识别 + Arco locale
 │   │   └── locales/
-│   │       ├── zh-CN.ts    #   中文语言包
-│   │       └── en-US.ts    #   英文语言包
+│   │       ├── zh-CN.ts    #   简体中文
+│   │       ├── en-US.ts    #   English
+│   │       ├── ar-SA.ts    #   العربية
+│   │       └── ja-JP.ts    #   日本語
 │   ├── styles/
 │   │   └── theme.css       # 主题色覆盖(Arco CSS 变量)
 │   ├── router/
@@ -95,13 +99,25 @@ admin-webui/
 │   │   └── sidebar.ts      #   侧栏折叠
 │   ├── layouts/
 │   │   ├── AdminLayout.vue # Pro 风格:Sider + Header + Content + Footer
-│   │   ├── AppSidebar.vue  #   菜单
+│   │   ├── AppSidebar.vue  #   菜单(支持一级 + 二级)
 │   │   └── AppHeader.vue   #   折叠按钮、面包屑、主题、通知、用户
+│   ├── components/         # 跨页面可复用业务组件
+│   │   ├── LanguageSwitch.vue
+│   │   ├── NotificationDropdown.vue
+│   │   └── ThemeSwitch.vue
 │   └── views/
-│       ├── login/LoginView.vue       # 登录页
-│       ├── dashboard/DashboardView.vue # 控制台
-│       ├── example/ExampleView.vue   # CRUD 示例
-│       └── NotFoundView.vue          # 404
+│       ├── login/LoginView.vue        # 登录页
+│       ├── dashboard/DashboardView.vue# 控制台
+│       ├── example/ExampleView.vue    # CRUD 示例
+│       ├── image/ImageView.vue        # Image 组件示例
+│       ├── upload/UploadView.vue      # Upload 组件示例
+│       ├── menu-demo/                 # 二级菜单示例
+│       │   ├── MenuDemoView.vue       #   父级占位(默认重定向到 menu1)
+│       │   ├── MenuDemoNav.vue        #   页面切换演示条(3 个子页通用)
+│       │   ├── Menu1View.vue          #   菜单 1:计数器
+│       │   ├── Menu2View.vue          #   菜单 2:Tabs + 描述列表
+│       │   └── Menu3View.vue          #   菜单 3:迷你记事本
+│       └── NotFoundView.vue           # 404
 ├── docs/
 │   └── DEVELOPMENT.md      # 开发规范
 ├── index.html
@@ -128,15 +144,55 @@ admin-webui/
 
 路由配置集中在 [`src/router/index.ts`](./src/router/index.ts),菜单数据集中在 [`src/config/menu.ts`](./src/config/menu.ts)。
 
+### 一级菜单(无子项)
+
 ```ts
 // src/config/menu.ts
-export const menuItems: MenuItem[] = [
-  { key: 'dashboard', title: '控制台', icon: IconDashboard, path: '/dashboard' },
-  { key: 'example',   title: '示例页面', icon: IconApps,    path: '/example'   },
-]
+{
+  key: 'dashboard',
+  title: 'menu.dashboard',   // i18n key
+  icon: IconDashboard,
+  path: '/dashboard',
+}
 ```
 
-新增页面只需:① 在 `src/views/<模块>/<XxxView>.vue` 写视图;② 在 `router/index.ts` 注册路由;③ 在 `config/menu.ts` 加一项菜单。详见下方 *新增一个业务页面*。
+### 一级菜单 + 二级子菜单
+
+`MenuItem.children` 字段非空时,自动用 `<a-sub-menu>` 渲染,二级项用 `SubMenuItem` 描述。
+
+```ts
+{
+  key: 'menu-demo',
+  title: 'menu.menuDemo',
+  icon: IconMenu,
+  path: '/menu-demo',        // 父级路径,用于选中态前缀匹配 / 路由重定向
+  children: [
+    { key: 'menu1', title: 'menu.menu1', path: '/menu-demo/menu1' },
+    { key: 'menu2', title: 'menu.menu2', path: '/menu-demo/menu2' },
+    { key: 'menu3', title: 'menu.menu3', path: '/menu-demo/menu3' },
+  ],
+}
+```
+
+路由侧需在 `src/router/index.ts` 注册嵌套:
+
+```ts
+{
+  path: 'menu-demo',
+  name: 'menu-demo',
+  redirect: '/menu-demo/menu1',     // 父级直接落子项
+  component: () => import('@/views/menu-demo/MenuDemoView.vue'),
+  meta: { title: 'menu.menuDemo', requiresAuth: true },
+  children: [
+    { path: 'menu1', name: 'menu1', component: () => import('@/views/menu-demo/Menu1View.vue'), meta: { title: 'menu.menu1', requiresAuth: true } },
+    // ...
+  ],
+}
+```
+
+完整步骤见 [「新增一个业务页面」](#-新增一个业务页面)。
+
+> Arco v2.58 注意事项:`<a-menu>` 的 `openKeys` 受控用法**必须用 `v-model:open-keys`**(即 `v-model:openKeys`)。它不提供 `sub-menu-toggle` 事件;若用单向 `:open-keys` + 自行监听,会导致点击一级菜单标题不展开。详见 [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md#arco-菜单组件)。
 
 ## 🛡️ 登录与权限
 
@@ -211,7 +267,7 @@ import '@arco-design/web-vue/es/notification/style/css.js'
 
 ## 🌍 国际化
 
-内置 **简体中文** 与 **English** 两种语言,通过 [`vue-i18n`](https://vue-i18n.intlify.dev) 实现。
+内置 **简体中文** / **English** / **العربية** / **日本語** 四语,通过 [`vue-i18n`](https://vue-i18n.intlify.dev) 实现。
 
 **启动时的语言决定顺序**(见 [`src/i18n/index.ts`](./src/i18n/index.ts)):
 
@@ -219,6 +275,8 @@ import '@arco-design/web-vue/es/notification/style/css.js'
 2. `navigator.language` / `navigator.languages` —— 浏览器语言
    - `zh*` → 中文
    - `en*` → 英文
+   - `ar*` → العربية
+   - `ja*` → 日本語
 3. 都匹配不上 → **默认中文**
 
 **切换方式**:Header 右上角地球图标 → 选择语言,会:
@@ -228,12 +286,15 @@ import '@arco-design/web-vue/es/notification/style/css.js'
 - 同步 `<html lang>` 属性
 - 同步 Arco `ConfigProvider` 的 locale(分页、日期组件等内部文案跟着切)
 - 重算面包屑与 `document.title`
+- 阿拉伯语切换时 `<html dir="rtl">` 同步翻转(由 arco 内置 `ConfigProvider` 处理)
 
-**新增 / 修改文案** —— 同时改两份文件:
+**新增 / 修改文案** —— 同时改四份文件:
 
 ```
 src/i18n/locales/zh-CN.ts
 src/i18n/locales/en-US.ts
+src/i18n/locales/ar-SA.ts
+src/i18n/locales/ja-JP.ts
 ```
 
 模板里用 `useI18n().t()`,带占位符用 `t('xxx', { name })`:
@@ -262,33 +323,30 @@ const { t } = useI18n()
 
 ## ➕ 新增一个业务页面
 
-以新增「文章管理」`/articles` 为例:
+### A. 一级菜单
 
-1. **创建视图**
-   ```
-   src/views/articles/ArticlesView.vue
-   ```
-   推荐复用 `views/example/ExampleView.vue` 的结构(搜索条 + 表格 + Modal)。
+1. **创建视图**:`src/views/<模块>/<Xxx>View.vue`(以 `View` 结尾)
+2. **注册路由**:`src/router/index.ts` 的 `AdminLayout.children` 中加一条
+3. **添加菜单**:`src/config/menu.ts` 的 `menuItems` 中加一项
+4. **补 i18n**:`src/i18n/locales/*.ts` 的 `menu` 段加 key
 
-2. **注册路由** —— [`src/router/index.ts`](./src/router/index.ts)
-   ```ts
-   {
-     path: 'articles',
-     name: 'articles',
-     component: () => import('@/views/articles/ArticlesView.vue'),
-     meta: { title: '文章管理', requiresAuth: true },
-   }
-   ```
+### B. 带二级子菜单
 
-3. **添加菜单** —— [`src/config/menu.ts`](./src/config/menu.ts)
-   ```ts
-   import { IconFile } from '@arco-design/web-vue/es/icon'
-   { key: 'articles', title: 'menu.articles', icon: IconFile, path: '/articles' }
-   ```
-   再到 [`src/i18n/locales/zh-CN.ts`](./src/i18n/locales/zh-CN.ts) 和
-   [`en-US.ts`](./src/i18n/locales/en-US.ts) 的 `menu` 段加上 `articles: '...'`。
+1. **创建视图目录**:`src/views/<模块>/`
+   - 父级占位页:`<模块>View.vue`(可空,父路由会 `redirect`)
+   - 子项:`<模块>Sub<序号>View.vue`
+   - 共享小组件(如需):放在同目录的 `components/` 或平铺
+2. **注册嵌套路由**:`src/router/index.ts` 加 `path: '<模块>'` 父路由,`children` 注册每个子项
+3. **菜单配置**:`src/config/menu.ts` 的对应项加 `children: SubMenuItem[]`
+4. **补 i18n**:`src/i18n/locales/*.ts` 的 `menu` 段加父 + 子 key,以及子页的命名空间文案
 
-4. **(可选)添加 Pinia store** —— 若该模块有独立的服务端状态,建一个 `stores/articles.ts`
+### C. 不进菜单的页面(如详情页)
+
+路由 `meta` 加 `hideInMenu: true`(留作未来扩展);目前菜单组件不读 meta,只读 `menu.ts`,只要不加进 `menuItems` 就不显示。
+
+### D. 可选:加 Pinia store
+
+若该模块有独立的全局状态(跨组件共享),建一个 `src/stores/<模块>.ts`;只在单页用的状态留在组件 `ref` 即可。
 
 完整规范见 [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md)。
 
@@ -301,6 +359,18 @@ const { t } = useI18n()
 
 示例骨架可参考 [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md#网络请求约定)。
 
+## 🧩 已实现的示例页
+
+| 路由 | 说明 | 主要组件 |
+| --- | --- | --- |
+| `/dashboard` | 控制台 | Statistic、Chart、Table |
+| `/example` | 用户管理 CRUD | Form、Table、Modal、Message |
+| `/image` | Image 组件全用法 | Image、Image.PreviewGroup |
+| `/upload` | Upload 组件全用法 | Upload(基础/拖拽/照片墙/限制/手动) |
+| `/menu-demo/menu1` | 二级菜单 1:计数器 | Button、Card |
+| `/menu-demo/menu2` | 二级菜单 2:信息架构 | Tabs、Descriptions、Collapse |
+| `/menu-demo/menu3` | 二级菜单 3:迷你记事本 | Form、Table、Modal |
+
 ## 🐞 常见问题
 
 **Q: 端口 5173 被占用?**
@@ -312,12 +382,15 @@ A: 检查 `<body>` 是否带 `arco-theme="dark"` 属性。重置:在浏览器 De
 **Q: TypeScript 报路径 `@/...` 找不到?**
 A: 同时修改了 `vite.config.ts` 和 `tsconfig.app.json` 才能生效;改完重启 IDE 的 TypeScript Server。
 
+**Q: 一级菜单点击不展开 / 二级菜单点不出来?**
+A: `<a-menu>` 必须用 `v-model:open-keys`,不能只写 `:open-keys`。arco v2.58 **没有** `sub-menu-toggle` 事件。受控用法见 [「路由与菜单」](#-路由与菜单) 末段。
+
 **Q: 想做按需引入减小体积?**
 A: 改用 `unplugin-vue-components` 自动按需 + `@arco-design/web-vue/es/<component>/style/index.js` 单独引入样式,可参考 Arco 官方文档。当前为了开发便捷使用全量引入。
 
 ## 📄 License
 
-私有项目,默认无开源协议。如需开源请补 `LICENSE`。
+私有项目,默认无开源协议。如要开源请补 `LICENSE`。
 
 ---
 

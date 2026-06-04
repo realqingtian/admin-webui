@@ -42,6 +42,34 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/upload/UploadView.vue'),
         meta: { title: 'menu.upload', requiresAuth: true },
       },
+      // 二级菜单示例:父路由仅占位,默认重定向到 menu1
+      {
+        path: 'menu-demo',
+        name: 'menu-demo',
+        redirect: '/menu-demo/menu1',
+        component: () => import('@/views/menu-demo/MenuDemoView.vue'),
+        meta: { title: 'menu.menuDemo', requiresAuth: true },
+        children: [
+          {
+            path: 'menu1',
+            name: 'menu1',
+            component: () => import('@/views/menu-demo/Menu1View.vue'),
+            meta: { title: 'menu.menu1', requiresAuth: true },
+          },
+          {
+            path: 'menu2',
+            name: 'menu2',
+            component: () => import('@/views/menu-demo/Menu2View.vue'),
+            meta: { title: 'menu.menu2', requiresAuth: true },
+          },
+          {
+            path: 'menu3',
+            name: 'menu3',
+            component: () => import('@/views/menu-demo/Menu3View.vue'),
+            meta: { title: 'menu.menu3', requiresAuth: true },
+          },
+        ],
+      },
     ],
   },
   {
