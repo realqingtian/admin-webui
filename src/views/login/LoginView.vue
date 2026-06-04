@@ -162,7 +162,7 @@ const year = new Date().getFullYear()
   flex: 1;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #4080ff 0%, #722ed1 100%);
+  background: linear-gradient(135deg, #4080ff 0%, #0e42d2 100%);
   color: #fff;
 }
 .banner-content {

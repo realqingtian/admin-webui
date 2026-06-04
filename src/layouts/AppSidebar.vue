@@ -97,11 +97,11 @@ function handleMenuClick(key: string) {
       <template v-for="item in menuItems" :key="item.key">
         <!-- 带二级子菜单 -->
         <a-sub-menu v-if="item.children?.length" :key="item.key">
+          <template #icon>
+            <component :is="item.icon" />
+          </template>
           <template #title>
-            <span class="menu-title">
-              <component :is="item.icon" />
-              {{ t(item.title) }}
-            </span>
+            {{ t(item.title) }}
           </template>
           <a-menu-item v-for="child in item.children" :key="child.key">
             {{ t(child.title) }}
@@ -131,11 +131,5 @@ function handleMenuClick(key: string) {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-}
-
-.menu-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 </style>
