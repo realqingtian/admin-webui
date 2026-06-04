@@ -29,6 +29,7 @@ export default {
     dashboard: 'ダッシュボード',
     example: 'サンプルページ',
     image: '画像デモ',
+    upload: 'アップロードデモ',
   },
 
   layout: {
@@ -258,6 +259,26 @@ export default {
       error: '読み込みエラー',
       errorText: '画像の読み込みに失敗しました',
       noPreview: 'プレビューなし',
+    },
+  },
+
+  upload: {
+    sections: {
+      basic: '基本的な使い方',
+      drag: 'ドラッグアップロード',
+      photoWall: 'フォトウォール',
+      restrictions: '制限条件',
+      manual: '手動アップロード',
+    },
+    descriptions: {
+      basic: 'クリックまたはファイルを選択してアップロードします。',
+      drag: 'ファイルをアップロード領域にドラッグしてアップロードします。',
+      photoWall: 'アップロードした画像がフォトウォール形式で表示され、プレビューに対応しています。',
+      restrictions: 'ファイルの種類（PNG / JPEG / GIF のみ）と数（最大3つ）を制限します。',
+      manual: 'ファイル選択後に自動アップロードされません。手動で一括送信できます。',
+    },
+    messages: {
+      success: 'ファイル「{name}」のアップロードに成功しました',
     },
   },
 }

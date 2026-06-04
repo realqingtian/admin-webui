@@ -53,6 +53,8 @@ declare module 'vue' {
     ATable: typeof import('@arco-design/web-vue')['Table']
     ATag: typeof import('@arco-design/web-vue')['Tag']
     ATooltip: typeof import('@arco-design/web-vue')['Tooltip']
+    ATypographyText: typeof import('@arco-design/web-vue')['TypographyText']
+    AUpload: typeof import('@arco-design/web-vue')['Upload']
     IconArrowFall: typeof import('@arco-design/web-vue/es/icon')['IconArrowFall']
     IconArrowRise: typeof import('@arco-design/web-vue/es/icon')['IconArrowRise']
     IconCheck: typeof import('@arco-design/web-vue/es/icon')['IconCheck']

@@ -29,6 +29,7 @@ export default {
     dashboard: 'Dashboard',
     example: 'Example',
     image: 'Image Demo',
+    upload: 'Upload Demo',
   },
 
   layout: {
@@ -258,6 +259,26 @@ export default {
       error: 'Load Error',
       errorText: 'Failed to load image',
       noPreview: 'No Preview',
+    },
+  },
+
+  upload: {
+    sections: {
+      basic: 'Basic Upload',
+      drag: 'Drag to Upload',
+      photoWall: 'Photo Wall',
+      restrictions: 'Restrictions',
+      manual: 'Manual Upload',
+    },
+    descriptions: {
+      basic: 'Click or select a file to upload.',
+      drag: 'Drag files to the upload area to upload.',
+      photoWall: 'Uploaded images are displayed as a photo wall with preview support.',
+      restrictions: 'Restrict file types (PNG / JPEG / GIF only) and count (max 3).',
+      manual: 'Files are not uploaded automatically after selection. Submit manually.',
+    },
+    messages: {
+      success: 'File "{name}" uploaded successfully',
     },
   },
 }

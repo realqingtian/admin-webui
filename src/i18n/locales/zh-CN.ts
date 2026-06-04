@@ -29,6 +29,7 @@ export default {
     dashboard: '控制台',
     example: '示例页面',
     image: '图片示例',
+    upload: '上传示例',
   },
 
   layout: {
@@ -258,6 +259,26 @@ export default {
       error: '加载失败',
       errorText: '图片加载失败',
       noPreview: '不可预览',
+    },
+  },
+
+  upload: {
+    sections: {
+      basic: '基础用法',
+      drag: '拖拽上传',
+      photoWall: '照片墙',
+      restrictions: '限制条件',
+      manual: '手动上传',
+    },
+    descriptions: {
+      basic: '点击或选择文件进行上传。',
+      drag: '将文件拖拽到上传区域即可上传。',
+      photoWall: '上传图片后以照片墙的形式展示，支持预览。',
+      restrictions: '限制上传文件的类型（仅允许 PNG / JPEG / GIF）和数量（最多 3 个）。',
+      manual: '选择文件后不会自动上传，可统一手动提交。',
+    },
+    messages: {
+      success: '文件「{name}」上传成功',
     },
   },
 }

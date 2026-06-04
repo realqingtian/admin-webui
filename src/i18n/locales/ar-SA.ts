@@ -29,6 +29,7 @@ export default {
     dashboard: 'لوحة التحكم',
     example: 'صفحة مثال',
     image: 'عرض الصور',
+    upload: 'عرض التحميل',
   },
 
   layout: {
@@ -258,6 +259,26 @@ export default {
       error: 'خطأ في التحميل',
       errorText: 'فشل تحميل الصورة',
       noPreview: 'بدون معاينة',
+    },
+  },
+
+  upload: {
+    sections: {
+      basic: 'التحميل الأساسي',
+      drag: 'السحب للتحميل',
+      photoWall: 'جدار الصور',
+      restrictions: 'القيود',
+      manual: 'التحميل اليدوي',
+    },
+    descriptions: {
+      basic: 'انقر أو اختر ملفاً للتحميل.',
+      drag: 'اسحب الملفات إلى منطقة التحميل للتحميل.',
+      photoWall: 'يتم عرض الصور المرفوعة كجدار صور مع دعم المعاينة.',
+      restrictions: 'تقييد أنواع الملفات (PNG / JPEG / GIF فقط) والعدد (3 كحد أقصى).',
+      manual: 'لا يتم التحميل تلقائياً بعد اختيار الملفات. أرسل يدوياً.',
+    },
+    messages: {
+      success: 'تم تحميل الملف "{name}" بنجاح',
     },
   },
 }

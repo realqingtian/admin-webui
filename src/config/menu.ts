@@ -2,7 +2,7 @@
  * 菜单配置 —— title 字段存 i18n key,渲染时再 t() 解析
  */
 import type { Component } from 'vue'
-import { IconDashboard, IconApps, IconImage } from '@arco-design/web-vue/es/icon'
+import { IconDashboard, IconApps, IconImage, IconUpload } from '@arco-design/web-vue/es/icon'
 
 export interface MenuItem {
   key: string
@@ -30,5 +30,11 @@ export const menuItems: MenuItem[] = [
     title: 'menu.image',
     icon: IconImage,
     path: '/image',
+  },
+  {
+    key: 'upload',
+    title: 'menu.upload',
+    icon: IconUpload,
+    path: '/upload',
   },
 ]

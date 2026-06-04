@@ -5,17 +5,9 @@ import { setLocale, SUPPORTED_LOCALES, type AppLocale } from '@/i18n'
 
 const { t, locale } = useI18n()
 
-const LOCALE_FLAGS: Record<AppLocale, string> = {
-  'zh-CN': '🇨🇳',
-  'en-US': '🇺🇸',
-  'ar-SA': '🇸🇦',
-  'ja-JP': '🇯🇵',
-}
-
 const options = computed(() =>
   SUPPORTED_LOCALES.map((l) => ({
     value: l,
-    flag: LOCALE_FLAGS[l],
     label:
       l === 'zh-CN'
         ? t('layout.lang.zhCN')
@@ -51,7 +43,7 @@ function onSelect(
         <template v-if="locale === opt.value" #icon>
           <icon-check />
         </template>
-        {{ opt.flag }} {{ opt.label }}
+        {{ opt.label }}
       </a-doption>
     </template>
   </a-dropdown>
